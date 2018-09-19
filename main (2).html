@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  body {
+  font-family: AppleSDGothicNeo-Regular, "Malgun Gothic", "맑은 고딕", dotum,
+    "돋움", sans-serif;
+  }
+  * {
+    padding: 0;
+    margin: 0;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .no-scroll {
+    overflow: hidden;
+  }
+  .content {
+    width: 1000px;
+    height: 500px;
+    margin: 2px;
+    border: 1px solid #aaa;
+  }
+  .modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+  }
+  .modal-container .dimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .modal-container .wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-container .wrapper .modal {
+    padding: 30px;
+    width: 400px;
+    background-color: #ffffff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    overflow: auto;
+  }
+  .modal-title {
+    margin-bottom: 10px;
+    font-size: 20pt;
+  }
+  .modal-body {
+    margin-bottom: 20px;
+    font-size: 15pt;
+    word-break: break-all;
+  }
+  .modal-btn {
+    margin-right: 10px;
+    padding: 10px;
+    background-color: #15aabf;
+    border: none;
+    font-size: 13pt;
+    color: #ffffff;
+    cursor:pointer;
+    float:right;
+  }
+
+  </style>
+</head>
+<body>
+  <article class="content">내용
+    <button type="button" class="button-test" id="alert-1">1 Alert</button>
+    <button type="button" class="button-test" id="alert-2">2 Alerts</button>
+    <button type="button" class="button-test" id="alert-3">3 Alerts</button>
+    <button type="button" class="button-test" id="confirm-1">1 Confirm</button>
+    <button type="button" class="button-test" id="confirm-2">2 Confirms</button>
+    <button type="button" class="button-test" id="confirm-3">3 Confirms</button>
+  </article>
+  <div>
+    <article class="content">내용1</article>
+    <article class="content">내용2</article>
+    <article class="content">내용3</article>
+    <article class="content">내용4</article>
+    <article class="content">내용5</article>
+    <article class="content">내용6</article>
+    <article class="content">내용7</article>
+    <article class="content">내용8</article>
+    <article class="content">내용9</article>
+  </div>
+  <script src="modal.js"></script>
+  <script>
+    let button = document.getElementById('alert-1');
+    button.onclick = function () {
+      let options = {
+        content: 'hello',
+        title: 'warning',
+        type: 'confirm',
+        // closeLabel: 'check',
+        cssClass: ['hello', 'world'],
+        buttons: [{
+          content: 'helloa',
+          type: 'normal',
+          func: function () {
+            console.log(this)
+            console.log('hello');
+            this.hide();
+          }
+        }]
+      };
+
+      new Modal(options).show();
+
+      options.content = '동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려 강산 대한사람 대한으로 길이 보전하세 남산 위에 저 소나무 철갑을 두른듯 바람서리 불변함은 우리 기상일세 무궁화 삼천리 화려 강산 대한사람 대한으로 길이 보전하세 가을 하늘 공활한데 높고 구름 없이 밝은 달은 우리 가슴 일편단심일세 무궁화 삼천리 화려 강산 대한사람 대한으로 길이 보전하세 이 기상과 이 마음으로 충성을 다하여 괴로우나 즐거우나 나라사랑하세 무궁화 삼천리 화려 강산 대한사람 대한으로 길이 보전하세';
+
+      options.buttons = [
+        {
+          content: '애국가 가사가 맞습니까?',
+          func: function(){
+            alert('맞습니다.')
+          }
+        }
+      ]
+      new Modal(options).show();
+
+      options.content = 'byebye'
+      new Modal(options).show();
+    };
+  </script>
+</body>
+</html>
