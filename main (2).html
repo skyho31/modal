@@ -80,6 +80,34 @@
     height: 44px;
   }
 
+  .log-container {
+    position: fixed;
+    top:10px;
+    left: calc(50vw - 200px);
+    word-break: break-all;
+    background: white;
+    height:44px;
+    width: 400px;
+    line-height: 44px;
+    padding-left:20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    transition: opacity 0.5s linear;
+    z-index: 1001;
+    border-left: 6px solid black;
+  }
+
+  .log-container.hidden {
+    opacity: 0;
+  }
+
+  .log-container.info{
+    border-left-color: #2ecc71;
+  }
+
+  .log-container.alert {
+    border-left-color: red;
+  }
+
   </style>
 </head>
 
@@ -105,7 +133,7 @@
     <article class="content">내용8</article>
     <article class="content">내용9</article>
   </div>
-  <script src="modal.js"></script>
+  <script src="modalModule.js"></script>
   <script>
     /**
      *  alert sample
@@ -166,12 +194,16 @@
         {
           content: 'ok',
           func: function(){
-            console.log('confirm1 ok');
+            customlog('confirm1 ok');
             this.hide();
           }
         },
         {
-          content: 'warn'
+          content: 'warn',
+          func: function(){
+            customlog('alert', 'alert');
+            
+          }
         }
       ]
     });
@@ -183,7 +215,7 @@
         {
           content: 'ok',
           func: function(){
-            console.log('confirm2 ok');
+            customlog('confirm2 ok');
             this.hide();
           }
         }
@@ -193,15 +225,15 @@
       content: 'confirm3 content',
       title: 'confirm-3',
       type: 'confirm',
-      buttons: [
-        {
-          content: 'ok',
-          func: function(){
-            console.log('confirm3 ok');
-            this.hide();
-          }
-        }
-      ]
+      // buttons: [
+      //   {
+      //     content: 'ok',
+      //     func: function(){
+      //       customlog('confirm3 ok');
+      //       this.hide();
+      //     }
+      //   }
+      // ]
     });
 
     confirm1Btn.onclick = confirm1Modal.show;
