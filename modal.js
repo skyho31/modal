@@ -14,15 +14,17 @@
  *      {
  *        content : 'ok',
  *        cssClass : []
- *        func: function(){              *default - modal.hide(); 
+ *        func: function(){              *default - this.hide(); 
  *          console.log('helloworld'); 
+ *          this.hide();
  *        }
  *      },
  *      {
  *        content : 'cancel',
  *        cssClass : []
- *        func: function(){              *default - modal.hide(); 
+ *        func: function(){              *default - this.hide(); 
  *          console.log('helloworld'); s
+ *          this.hide();
  *        }
  *      }
  *    ]
@@ -34,12 +36,18 @@
 
 (function (global) {
   function Modal(options) {
+    this.type = options.type;
     this.content = options.content;
     this.title = options.title || 'alert';
     this.closeLabel = options.closeLabel || 'cancel';
     this.cssClass = options.cssClass || [];
     this.buttons = options.buttons || [];
     this.originOverflow = document.body.style.overflow;
+
+
+    // function bind
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
   }
 
   Modal.prototype = {
@@ -79,11 +87,10 @@
         this.modalDiv.classList.add(singleClass);
       });
 
-      this.modalFooter.appendChild(this.cancelBtn);
-      this.buttons.forEach(buttonOption => {
+      this.type === 'confirm' && this.buttons.forEach(buttonOption => {
         this.modalFooter.appendChild(this._createButton(buttonOption));
       });
-
+      this.modalFooter.appendChild(this.cancelBtn);
       this.modalContainer.appendChild(this.modalWrapper);
       this.modalWrapper.appendChild(this.modalDiv);
       this.modalDiv.appendChild(this.modalTitle);
@@ -96,7 +103,6 @@
       const that = this;
       this.modalDiv.addEventListener('click', function (e) {
         if (e.target.className === 'modal-btn cancel') {
-          console.log(e.target.className);
           that.hide();
         }
       });
@@ -105,7 +111,7 @@
       const { content, cssClass, func } = option;
       const button = this._domGenerator('button', 'modal-btn', cssClass);
       button.innerText = content;
-      button.onclick = func;
+      button.onclick = (func && func.bind(this)) || this.hide;
 
       return button;
     },
