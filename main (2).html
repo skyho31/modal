@@ -21,6 +21,11 @@
     height: 500px;
     margin: 2px;
     border: 1px solid #aaa;
+    overflow: auto;
+  }
+
+  .testBox {
+    height:100vh;
   }
   .modal-container {
     position: fixed;
@@ -53,6 +58,15 @@
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
     overflow: auto;
   }
+
+  .modal.alert{
+    border-top: 6px solid red;
+  }
+
+  .modal.confirm{
+    border-top: 6px solid green;
+  }
+
   .modal-title {
     margin-bottom: 10px;
     font-size: 20pt;
@@ -82,29 +96,32 @@
 
   .log-container {
     position: fixed;
-    top:10px;
-    left: calc(50vw - 200px);
+    top:0;
+    left:0;
+    width:100%;
+    z-index: 1001;
+
+  }
+
+  .log-box {
+    margin:auto;
     word-break: break-all;
     background: white;
     height:44px;
     width: 400px;
     line-height: 44px;
     padding-left:20px;
+    margin-top:5px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-    transition: opacity 0.5s linear;
-    z-index: 1001;
+    transition: height 1s linear;
     border-left: 6px solid black;
   }
 
-  .log-container.hidden {
-    opacity: 0;
-  }
-
-  .log-container.info{
+  .log-box.info{
     border-left-color: #2ecc71;
   }
 
-  .log-container.alert {
+  .log-box.alert {
     border-left-color: red;
   }
 
@@ -113,19 +130,19 @@
 
 <body>
   <article class="content">내용
-   
+    <button type="button" class="button-test" id="alert-1">1 Alert</button>
+    <button type="button" class="button-test" id="alert-2">2 Alerts</button>
+    <button type="button" class="button-test" id="alert-3">3 Alerts</button>
+    <button type="button" class="button-test" id="confirm-1">1 Confirm</button>
+    <button type="button" class="button-test" id="confirm-2">2 Confirms</button>
+    <button type="button" class="button-test" id="confirm-3">3 Confirms</button>
   </article>
   <div>
-    <article class="content">내용1</article>
-    <article class="content">내용2</article>
-    <article class="content">내용3
-        <button type="button" class="button-test" id="alert-1">1 Alert</button>
-        <button type="button" class="button-test" id="alert-2">2 Alerts</button>
-        <button type="button" class="button-test" id="alert-3">3 Alerts</button>
-        <button type="button" class="button-test" id="confirm-1">1 Confirm</button>
-        <button type="button" class="button-test" id="confirm-2">2 Confirms</button>
-        <button type="button" class="button-test" id="confirm-3">3 Confirms</button>
+    <article class="content">내용1
+      <div class="testBox"></div>
     </article>
+    <article class="content">내용2</article>
+    <article class="content">내용3</article>
     <article class="content">내용4</article>
     <article class="content">내용5</article>
     <article class="content">내용6</article>
@@ -134,119 +151,7 @@
     <article class="content">내용9</article>
   </div>
   <script src="modalModule.js"></script>
-  <script>
-    /**
-     *  alert sample
-     */
-
-    // 1. select target dom
-    let alert1Btn = document.getElementById('alert-1');
-    let alert2Btn = document.getElementById('alert-2');
-    let alert3Btn = document.getElementById('alert-3');
-
-
-    // 2. create alert modal
-    let alert1Modal = new Modal({
-        content: 'alert1 content',
-        title: 'alert-1',
-        type: 'alert',
-        buttons: [
-          {
-            content: 'heloo'
-          }
-        ]
-    });
-    let alert2Modal = new Modal({
-      content: 'alert2 content',
-      title: 'alert-2',
-      type: 'alert'
-    });
-    let alert3Modal = new Modal({
-      content: 'alert3 content',
-      title: 'alert-3',
-      type: 'alert'
-    });
-
-    // 3. event bind
-    alert1Btn.onclick = alert1Modal.show;
-    alert2Btn.onclick = function(){
-      alert1Modal.show();
-      alert2Modal.show();
-    }
-    alert3Btn.onclick = function(){
-      alert1Modal.show();
-      alert2Modal.show();
-      alert3Modal.show();
-    }
-
-    /**
-     *  confirm sample
-     */
-    let confirm1Btn = document.getElementById('confirm-1');
-    let confirm2Btn = document.getElementById('confirm-2');
-    let confirm3Btn = document.getElementById('confirm-3');
-
-    let confirm1Modal = new Modal({
-      content: 'confirm1 content',
-      title: 'confirm-1',
-      type: 'confirm',
-      buttons: [
-        {
-          content: 'ok',
-          func: function(){
-            customlog('confirm1 ok');
-            this.hide();
-          }
-        },
-        {
-          content: 'warn',
-          func: function(){
-            customlog('alert', 'alert');
-            
-          }
-        }
-      ]
-    });
-    let confirm2Modal = new Modal({
-      content: 'confirm2 content',
-      title: 'confirm-2',
-      type: 'confirm',
-      buttons: [
-        {
-          content: 'ok',
-          func: function(){
-            customlog('confirm2 ok');
-            this.hide();
-          }
-        }
-      ]
-    });
-    let confirm3Modal = new Modal({
-      content: 'confirm3 content',
-      title: 'confirm-3',
-      type: 'confirm',
-      // buttons: [
-      //   {
-      //     content: 'ok',
-      //     func: function(){
-      //       customlog('confirm3 ok');
-      //       this.hide();
-      //     }
-      //   }
-      // ]
-    });
-
-    confirm1Btn.onclick = confirm1Modal.show;
-    confirm2Btn.onclick = function(){
-      confirm1Modal.show();
-      confirm2Modal.show();
-    };
-    confirm3Btn.onclick = function(){
-      confirm1Modal.show();
-      confirm2Modal.show();
-      confirm3Modal.show();
-    }
-  </script>
+  <script src="execute.js"></script>
 </body>
 
 </html>
