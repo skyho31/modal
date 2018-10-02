@@ -2,8 +2,8 @@
  * Modal Module
  * 
  * Author : Seonho Kim 
- * version : es6
- * date : 2018.09.20
+ * version : es5
+ * date : 2018.10.2
  * 
  * 1.사용자에게 노출될 내용
  * - Modal 제목
@@ -33,7 +33,7 @@
 (function (global) {
 
   /**
-   * @description	 generate dom object using tag name and className
+   * @description generate dom object using tag name and className
    * 
    * @param {String} tag html tag name
    * @param  {...String} classes className Array
@@ -105,91 +105,22 @@
    * }
    * 
    */
-  class Modal {
-    constructor(options) {
-      // set initialValue
-      options = options || {};
-      this.type = options.type || 'alert';
-      this.content = options.content || 'no contents';
-      this.title = options.title || '';
-      this.confirmLabel = options.confirmLabel || 'confirm';
-      this.closeLabel = options.closeLabel || 'cancel';
-      this.classes = options.classes || [];
-      this.buttons = this._splitButton(options.buttons || []);
-      this.originOverflow = document.body.style.overflow;
 
-      // function bind
-      this.show = this.show.bind(this);
-      this.hide = this.hide.bind(this);
-    }
+  function Modal(options){
+    options = options || {};
+    this.type = options.type || 'alert';
+    this.content = options.content || 'no contents';
+    this.title = options.title || '';
+    this.confirmLabel = options.confirmLabel || 'confirm';
+    this.closeLabel = options.closeLabel || 'cancel';
+    this.classes = options.classes || [];
+    this.buttons = options.buttons || [];
+    this.originOverflow = document.body.style.overflow;
+  }
 
-    show() {
-      this._create();
-      this._bindEvent();
+  Modal.prototype = (function(){
 
-      // change overflow attribute for scroll lock
-      document.body.style.overflow = 'hidden';
-    }
-
-    hide() {
-      this.modalContainer.remove();
-      if (this._isEmpty()) {
-        // restore origin overflow attribute
-        document.body.style.overflow = this.originOverflow;
-      }
-    }
-
-    _bindEvent() {
-      // for bind event scope
-      const that = this;
-
-      // event delegate
-      this.modalContainer.addEventListener('click', function (e) {
-        if (e.target.classList.contains('modal-btn')) {
-          const index = e.target.dataset.index;
-          const func = that.buttons.funcs[index];
-          
-          (func && func.bind(that) || that.hide)();
-        }
-      });
-    }
-
-    _create() {
-      // create dom
-      this.modalContainer = domGenerator('div', 'modal-container');
-      const modalWrapper = domGenerator('div', 'wrapper', 'dimmer');
-      const modalDiv = domGenerator('div', 'modal');
-      const modalTitle = domGenerator('div', 'modal-title');
-      const modalBody = domGenerator('div', 'modal-body');
-      const modalFooter = domGenerator('div', 'modal-footer');
-
-      // bind value
-      modalTitle.innerHTML = this.title;
-      modalBody.innerHTML = this.content;
-
-      // apply custom css
-      this.classes.forEach(singleClass => {
-        modalDiv.classList.add(singleClass);
-      });
-
-      // add button group
-      this.buttons.texts.forEach((buttonText, idx) => {
-        const classes = this.buttons.classes[idx];
-        const button = this._createButton(buttonText, classes, idx);
-
-        modalFooter.appendChild(button);
-      });
-
-      // render dom
-      this.modalContainer.appendChild(modalWrapper);
-      modalWrapper.appendChild(modalDiv);
-      modalDiv.appendChild(modalTitle);
-      modalDiv.appendChild(modalBody);
-      modalDiv.appendChild(modalFooter);
-      document.body.appendChild(this.modalContainer);
-    }
-
-    _createButton(text, classes, idx) {
+    _createButton = function (text, classes, idx) {
       const button = domGenerator('button', 'modal-btn');
       Array.isArray(classes) && classes.forEach(singleClass => {
         button.classList.add(singleClass);
@@ -199,13 +130,9 @@
       button.dataset.index = idx;
 
       return button;
-    }
+    },
 
-    _isEmpty() {
-      return document.getElementsByClassName('modal-container').length === 0;
-    }
-
-    _splitButton(buttonOptions) {
+    _splitButton = function(buttonOptions) {
       const buttonTexts = [];
       const buttonFuncs = [];
       const buttonClasses = [];
@@ -229,14 +156,88 @@
       // add cancel button
       buttonTexts.push(this.closeLabel);
 
-      return {
+      this.buttons = {
         texts: buttonTexts,
         funcs: buttonFuncs,
         classes: buttonClasses
       }
     }
-  }
+
+    _create = function() {
+      // create dom
+      this.modalContainer = domGenerator('div', 'modal-container');
+      var modalWrapper = domGenerator('div', 'wrapper', 'dimmer');
+      var modalDiv = domGenerator('div', 'modal');
+      var modalTitle = domGenerator('div', 'modal-title');
+      var modalBody = domGenerator('div', 'modal-body');
+      var modalFooter = domGenerator('div', 'modal-footer');
+
+      // bind value
+      modalTitle.innerHTML = this.title;
+      modalBody.innerHTML = this.content;
+
+      // apply custom css
+      this.classes.forEach(singleClass => {
+        modalDiv.classList.add(singleClass);
+      });
+
+      // add button group
+      this.buttons.texts.forEach((buttonText, idx) => {
+        var classes = this.buttons.classes[idx];
+        var button = _createButton.call(this, buttonText, classes, idx);
+
+        modalFooter.appendChild(button);
+      });
+
+      // render dom
+      this.modalContainer.appendChild(modalWrapper);
+      modalWrapper.appendChild(modalDiv);
+      modalDiv.appendChild(modalTitle);
+      modalDiv.appendChild(modalBody);
+      modalDiv.appendChild(modalFooter);
+      document.body.appendChild(this.modalContainer);
+    },
+
+    _isEmpty = function() {
+      return document.getElementsByClassName('modal-container').length === 0;
+    },
+
+    _bindEvent = function() {
+      // for bind event scope
+      var that = this;
+
+      // event delegate
+      this.modalContainer.addEventListener('click', function (e) {
+        if (e.target.classList.contains('modal-btn')) {
+          var index = e.target.dataset.index;
+          var func = that.buttons.funcs[index];
+          
+          (func && func.bind(that) || hide.call(that))();
+        }
+      });
+    }
+    
+    show = function(){
+      _splitButton.call(this, this.buttons)
+      _create.call(this);
+      _bindEvent.call(this);
+    },
+
+    hide = function(){
+      this.modalContainer.remove();
+      if (_isEmpty()) {
+        // restore origin overflow attribute
+        document.body.style.overflow = this.originOverflow;
+      }
+    }
+    
+    return {
+      show: show,
+      hide: hide
+    }
+  })();
 
   global.Modal = Modal;
   global.customlog = customlog;
 }(window));
+
